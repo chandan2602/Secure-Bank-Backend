@@ -1,0 +1,10 @@
+uvicorn 
+fastapi
+Pydentic                
+sqlalchemy              # for database related quey
+psycopg2-binary         # for postgress database
+python-dotenv           # for importing content from the .env file
+passlib[argon2]         # for hashing passowrd
+python-jose[cryptography]       # for creating jwt token
+python-multipart                # for form filling form like login
+pydantic[email]                 # for email id vaification
