@@ -4,7 +4,7 @@ from sqlalchemy import func
 
 from sqlalchemy import Column, Integer, VARCHAR, DATE, TIMESTAMP
 
-class user_registration(Base):
+class UserRegistration(Base):
     __tablename__ = "secure_bank_user_registration"
     
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)

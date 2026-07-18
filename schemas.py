@@ -1,0 +1,12 @@
+from pydantic import BaseModel,EmailStr 
+
+class userRegistration(BaseModel):
+    full_name : str
+    mobile_number :str
+    email : EmailStr                # it will take only email
+    user_name : str
+    user_password : str
+    
+class userLogin(BaseModel):
+    email:EmailStr
+    password : str
