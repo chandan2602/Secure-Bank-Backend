@@ -5,10 +5,11 @@ from fastapi import Depends,APIRouter, HTTPException, status
 from sqlalchemy.orm import Session
 import os
 from dotenv import load_dotenv
-from jose import jwt
+from jose import jwt,JWTError
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+
 
 router = APIRouter()
 
@@ -25,6 +26,31 @@ def create_jwt_token(data:dict):
     generate_jwt_token = jwt.encode(token_data,SECRET_KEY, algorithm =  ALGORITHM)
     return generate_jwt_token
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+def get_currentuser(
+    token :str =  Depends(oauth2_scheme),
+    db: Session = Depends(get_db)):
+    
+    credential_exception  = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED, 
+        detail = "user not found", 
+        headers= {"www-Authenticate" : "Bearer"})
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
+        email:str = payload.get("sub")
+        
+        if email is None:
+            raise credential_exception
+    except JWTError :
+        raise credential_exception
+        
+    user = db.query(UserRegistration).filter(UserRegistration.email == email).first()
+    
+    if user is None:
+        raise credential_exception
+    
+    return user
+        
 
 password_context = CryptContext(schemes=["argon2"],deprecated = "auto")
 
@@ -77,6 +103,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session = Depends
     
 
 @router.get("/get_users")
-def get_users(db:Session = Depends(get_db) ):
-    get_user = db.query(UserRegistration).all()
-    return get_user
+def get_users(
+    current_user: UserRegistration = Depends(get_currentuser)):
+    
+    # get_user = db.query(UserRegistration).all()
+    return {
+        "message" : f"Welcome {current_user.full_name}"
+    }
