@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # file router import 
 from Registration import router as registration_router
+from Transation import router as transation_router
 
 app = FastAPI()
 
 app.include_router(registration_router)
+app.include_router(transation_router)
 
 app.add_middleware(
     CORSMiddleware,

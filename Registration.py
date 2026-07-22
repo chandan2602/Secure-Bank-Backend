@@ -1,4 +1,4 @@
-from schemas import userRegistration, userLogin 
+from schemas import userRegistration 
 from models import UserRegistration
 from database import get_db
 from fastapi import Depends,APIRouter, HTTPException, status
@@ -28,7 +28,7 @@ def create_jwt_token(data:dict):
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def get_currentuser(
-    token :str =  Depends(oauth2_scheme),
+    token :str =  Depends(oauth2_scheme),       # Dependency Injection
     db: Session = Depends(get_db)):
     
     credential_exception  = HTTPException(

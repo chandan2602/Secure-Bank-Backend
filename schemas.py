@@ -1,4 +1,5 @@
 from pydantic import BaseModel,EmailStr 
+from datetime import datetime, date
 
 class userRegistration(BaseModel):
     full_name : str
@@ -10,3 +11,10 @@ class userRegistration(BaseModel):
 class userLogin(BaseModel):
     email:EmailStr
     password : str
+    
+class userTransation(BaseModel):
+    full_name : str
+    mobile_number : str
+    email : EmailStr
+    amount : str
+    loan_date : date
