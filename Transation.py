@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from models import Transation
 from schemas import userTransation
 from database import get_db
@@ -32,5 +33,11 @@ def getUserTransation(transationobj : userTransation, db:Session = Depends(get_d
 def getUserTransation( db:Session = Depends(get_db)):
     
     all_transation = db.query(Transation).all()
+    all_transation_count = db.query(Transation).count()
+    Total_amount = db.execute(text("SELECT SUM(amount) FROM secure_bank_user_transations"))
     
-    return all_transation
+    return {
+        "Transation_List": all_transation,
+        "Total_transation_count" : all_transation_count,
+        "Total_amount" : Total_amount.scalar()
+    }

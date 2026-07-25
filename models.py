@@ -1,6 +1,6 @@
 from datetime import date
 from database import Base,engine
-from sqlalchemy import Column, Integer, VARCHAR, DATE, TIMESTAMP, func
+from sqlalchemy import Column, Integer, VARCHAR, DATE, TIMESTAMP, func, DECIMAL
 
 class UserRegistration(Base):
     __tablename__ = "secure_bank_user_registration"
@@ -21,9 +21,19 @@ class Transation(Base):
     full_name = Column(VARCHAR(50))
     mobile_number = Column(VARCHAR(10))
     email = Column(VARCHAR(50))
-    amount =Column(VARCHAR(10))
+    amount =Column(DECIMAL(10,2))
     loan_date = Column(DATE, default=date.today)
     created_at = Column(TIMESTAMP, server_default = func.now())
+    
+class Support(Base):
+    __tablename__ = 'secure_bank_user_support'
+    
+    id = Column(Integer, primary_key= True, autoincrement= True, index= True)
+    full_name = Column(VARCHAR(100))
+    mobile_number = Column(VARCHAR(10))
+    email = Column(VARCHAR(50))
+    Description = Column(VARCHAR(500))
+    submission_date = Column(DATE,default=date.today)
     
     
 

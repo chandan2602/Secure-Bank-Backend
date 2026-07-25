@@ -1,4 +1,4 @@
-from pydantic import BaseModel,EmailStr 
+from pydantic import BaseModel,EmailStr
 from datetime import datetime, date
 
 class userRegistration(BaseModel):
@@ -16,5 +16,11 @@ class userTransation(BaseModel):
     full_name : str
     mobile_number : str
     email : EmailStr
-    amount : str
+    amount : float
     loan_date : date
+    
+class userSupport(BaseModel):
+    full_name : str
+    mobile_number : str
+    email : EmailStr
+    Description : str
