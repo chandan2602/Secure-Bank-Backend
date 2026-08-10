@@ -1,4 +1,4 @@
-from schemas import userRegistration 
+from schemas import userRegistration,userLogin
 from models import UserRegistration
 from database import get_db
 from fastapi import Depends,APIRouter, HTTPException, status
@@ -8,10 +8,10 @@ from dotenv import load_dotenv
 from jose import jwt,JWTError
 from datetime import datetime, timedelta, timezone
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 
-router = APIRouter()
+router = APIRouter(prefix='/registration', tags = ['Registration'])
 
 load_dotenv()
 
@@ -26,15 +26,20 @@ def create_jwt_token(data:dict):
     generate_jwt_token = jwt.encode(token_data,SECRET_KEY, algorithm =  ALGORITHM)
     return generate_jwt_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+security  = HTTPBearer()
+
 def get_currentuser(
-    token :str =  Depends(oauth2_scheme),       # Dependency Injection
+    
+    credetial : HTTPAuthorizationCredentials=Depends(security),       # Dependency Injection
     db: Session = Depends(get_db)):
+    
+    token = credetial.credentials
     
     credential_exception  = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED, 
         detail = "user not found", 
-        headers= {"www-Authenticate" : "Bearer"})
+        headers={"WWW-Authenticate": "Bearer"}
+        )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms = [ALGORITHM])
         email:str = payload.get("sub")
@@ -88,9 +93,10 @@ def user_registration(obj : userRegistration, db:Session = Depends(get_db)):
 
 
 @router.post("/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db:Session = Depends(get_db)):
+def login(form_data:userLogin  , db:Session = Depends(get_db)):
     # user exist or not
-    user = db.query(UserRegistration).filter(UserRegistration.email == form_data.username).first()
+    user = db.query(UserRegistration).filter(UserRegistration.email == form_data.email).first()
+    
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail= "Invalid User")
     
@@ -108,5 +114,9 @@ def get_users(
     
     # get_user = db.query(UserRegistration).all()
     return {
-        "message" : f"Welcome {current_user.full_name}"
+        "Name" : current_user.full_name,
+        "Email" : current_user.email,
+        "username" :current_user.user_name,
+        "mobile_no" : current_user.mobile_number,
+        "password" : current_user.user_password
     }

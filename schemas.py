@@ -13,11 +13,16 @@ class userLogin(BaseModel):
     password : str
     
 class userTransation(BaseModel):
-    full_name : str
-    mobile_number : str
-    email : EmailStr
-    amount : float
-    loan_date : date
+    full_name: str
+    mobile_number: str
+    email: EmailStr
+    amount: float
+    loan_date: date
+    intrest_rate: float
+    
+class updateTransation(BaseModel):
+    total_days : int
+    intrest_amount : int   
     
 class userSupport(BaseModel):
     full_name : str

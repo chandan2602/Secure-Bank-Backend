@@ -23,6 +23,10 @@ class Transation(Base):
     email = Column(VARCHAR(50))
     amount =Column(DECIMAL(10,2))
     loan_date = Column(DATE, default=date.today)
+    intrest_rate = Column(DECIMAL(10,2))
+    total_days = Column(Integer)
+    interest_amount = Column(DECIMAL(10,2))
+    total_amount = Column(DECIMAL(10,2))
     created_at = Column(TIMESTAMP, server_default = func.now())
     
 class Support(Base):

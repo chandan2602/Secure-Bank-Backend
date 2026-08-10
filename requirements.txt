@@ -8,3 +8,4 @@ passlib[argon2]         # for hashing passowrd
 python-jose[cryptography]       # for creating jwt token
 python-multipart                # for form filling form like login
 pydantic[email]                 # for email id vaification
+fastapi-mail                    # for sending mail(smtp)
