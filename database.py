@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,text
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
@@ -25,3 +25,23 @@ def get_db():
         
 # Declarative base is the main important funcion from which all the sqlachemy model inherit
 Base = declarative_base()
+
+
+# Execute SELECT query
+def execute_query(query: str):
+
+    db = sessionloacal()
+
+    try:
+
+        result = db.execute(
+            text(query)
+        )
+
+        rows = result.mappings().all()
+
+        return [dict(row) for row in rows]
+
+    finally:
+
+        db.close()

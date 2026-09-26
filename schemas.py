@@ -29,3 +29,6 @@ class userSupport(BaseModel):
     mobile_number : str
     email : EmailStr
     Description : str
+    
+class QuestionRequest(BaseModel):
+    question : str

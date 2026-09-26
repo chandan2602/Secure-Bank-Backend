@@ -9,3 +9,11 @@ python-jose[cryptography]       # for creating jwt token
 python-multipart                # for form filling form like login
 pydantic[email]                 # for email id vaification
 fastapi-mail                    # for sending mail(smtp)
+
+langchain
+langchain-openai
+langchain-community
+chromadb
+sentence-transformers
+openai
+groq
