@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends,Query
 from database import get_db
 from sqlalchemy.orm import Session
+from sqlalchemy import text,func,or_
 from models import Support
 from schemas import userSupport
 from email_service import send_email
@@ -167,5 +168,46 @@ def support(sp:userSupport, db: Session = Depends(get_db)):
     }
 
 @router.get("/get_support")
-def getSupport(db:Session= Depends(get_db)):
-    return db.query(Support).all()
+def getSupport(
+    page : int = Query(default=1, ge=1, description= "Page Number"),
+    limit : int = Query(default=10, ge=1, le=100, description="Page limit"),
+    search : str | None = Query(default=None,max_length=50, description= "search"),
+    db:Session= Depends(get_db)):
+    
+    # 1. Calculate offset
+    offset = (page - 1) * limit
+    
+    # 2. clean seach
+    clean_search = search.strip() if search else None
+    
+    # 3. Base query( for getting all the data from the db)
+    Base_query = db.query(Support)
+    
+    # 4. Apply search
+    if clean_search:
+        search_value = f"%{clean_search}%"
+        
+        Base_query = Base_query.filter(
+            or_(
+                Support.full_name.ilike(search_value),
+                Support.mobile_number.ilike(search_value),
+                Support.email.ilike(search_value)
+            )
+        )
+    
+    # 5. Total count after filter
+    total_count = Base_query.count()
+    
+    # 6. get paginated result
+    all_support = (Base_query.order_by(Support.id.desc())
+                   .offset(offset)
+                   .limit(limit).all())
+     
+    
+    return {
+        "page" : page,
+        "limit" : limit,
+        "Total_pages" : (total_count + limit - 1) // limit,
+        "total_record" : total_count,
+        "all_support" :all_support,
+            }
